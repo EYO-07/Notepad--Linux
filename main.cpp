@@ -25,7 +25,7 @@ static int WIDTH = 1200;
 static int HEIGHT = 800;
 static QsciScintilla* clipboardPage = nullptr; //
 int splitter_toggle_pos = 1;
-static std::string VERSION="2026-06-23_11";
+static std::string VERSION="2026-06-23_20";
 static std::string USAGE_TEXT = R"(
 Usage: <application> [options] [files]
 
@@ -66,7 +66,7 @@ void debugFileWatcher(const QFileSystemWatcher& watcher) { // UNUSED
     QMessageBox::information(nullptr, "Files Being Watched", filePaths);
 }
 
-// -- 
+// -- ENTRY POINT
 int main(int argc, char *argv[]) {
     // FILE_MODIFICATION = QHash<QString, QDateTime>();
     // Components    
@@ -487,12 +487,12 @@ void darkTabScintillaLogic(QsciScintilla* view) {
                 QString absPath = data.value<QString>();
                 if ( !fileExists(absPath).isNull() && !fileExists(absPath).isEmpty() ) {
                     if ( view->isReadOnly() ) {
-                        QMessageBox::warning(view, "Aborted", "The editor for "+absPath+" is read only");
+                        QMessageBox::warning(view, "Aborted", "The editor for "+absPath+" is on read only mode, Ctrl+R to toggle");
                         return true;
                     }
                     QString errorMessage = saveFile(absPath, view->text());
                     if ( errorMessage.isEmpty() || errorMessage.isNull() ) {
-                        QMessageBox::information(view, "File Saved", "File Saved on: "+absPath);
+                        //QMessageBox::information(view, "File Saved", "File Saved on: "+absPath);
                         log(QString("File Saved : '%1'").arg(absPath));
                         if ( prev_tab_text.startsWith("* ") ) {
                             tabs->setTabText(currentTab,prev_tab_text.sliced(2));

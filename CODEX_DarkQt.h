@@ -32,6 +32,8 @@
 #include <QTextEdit>
 #include <QFontDatabase>
 
+QString rgba_to_hex_color(int r,int g,int b,int a);
+QString rgb_to_hex_color(int r,int g,int b);
 //
 namespace CodexTransmutation {
     QString loadFile(QString pathFilename);
@@ -45,7 +47,6 @@ namespace CodexTransmutation {
     QString getExtension(QString fileName);
     QString joinPaths(const QString &path1, const QString &path2);
     //
-    
 }
 namespace CodexIncantation {
     QList<QString> getFonts(QString substring); // !

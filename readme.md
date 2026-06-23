@@ -1,4 +1,6 @@
-# Notepad-- Linux Qt6, QsciScintilla
+# Notepad-- (Linux)
+
+![ ](ss_0_1782253998.png)
 
 This is a linux version of [Notepad--](https://github.com/EYO-07/Notepad--) written in **c++** and using **Qt6 Framework** and **QsciScintilla** port of **Scintilla** for **Qt**. A slop and much lesser version of **Notepad++**, don't like it? Use **Notepad++** instead. This project should work well with Debian-based and Arch-based linux distributions.
 

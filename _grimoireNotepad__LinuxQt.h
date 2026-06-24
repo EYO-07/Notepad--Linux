@@ -419,6 +419,23 @@ Workflow [ Programming ] { Magic Oriented Programming Paradigm }
  * setCancelButtonText(QString); // Customizes the 'Cancel' label.
  * // Note: Use the static methods for simple tasks; instantiate for advanced config.
  * */
+/* Inventory : color picker { Qt6, C++ }
+1. <QColorDialog> <QColor> // includes for color picker dialog 
+2. QColor color = QColorDialog::getColor(QColor, QWidget, QString); // syntax for color picker dialog
+3. QColorDialog::ColorDialogOptions // enum flags for dialog customization (e.g., ShowAlphaChannel)
+4. QColorDialog::ShowAlphaChannel // option flag to enable transparency/alpha slider
+5. QColorDialog::DontUseNativeDialog // option flag to force Qt style instead of OS native dialog
+6. QColorDialog::NoButtons // option flag to hide OK/Cancel buttons for live preview modes
+7. dialog->setOption(QColorDialog::ColorDialogOption, bool) // method to enable/disable specific options on instance
+8. connect(dialog, &QColorDialog::currentColorChanged, ...) // signal emitted when user drags color picker (live update)
+9. connect(dialog, &QColorDialog::colorSelected, ...) // signal emitted when user clicks OK
+10. QColor::name(QColor::NameFormat) // method to convert QColor to hex string (default HexRgb)
+11. QColor::HexRgb // enum value for "#RRGGBB" format (no alpha)
+12. QColor::HexArgb // enum value for "#AARRGGBB" format (includes alpha)
+13. dialog->open() // method to show dialog non-modally (asynchronous)
+14. dialog->exec() // method to show dialog modally (blocking, returns int result)
+15. color.isValid() // method to check if user selected a color or cancelled (returns false if cancelled)
+*/   
 
 /* Inventory [ ] { C++, Qt6 } 
 1. SYNTAX // SHORTDESCRIPTION 

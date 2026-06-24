@@ -32,12 +32,9 @@
 #include <QTextEdit>
 #include <QFontDatabase>
 
-QString rgba_to_hex_color(int r,int g,int b,int a);
-QString rgb_to_hex_color(int r,int g,int b);
 //
 namespace CodexTransmutation {
     QString loadFile(QString pathFilename);
-    // void saveFile(QString pathFilename, QString);
     QString saveFile(const QString &fileName, const QString &content);
     QString fileExists(QString path); // return "" or absolute path
     QString isDir(QString path); // return "" or absolute path 
@@ -46,7 +43,8 @@ namespace CodexTransmutation {
     bool isEnclosedBy(QString target, QString begin, QString end);
     QString getExtension(QString fileName);
     QString joinPaths(const QString &path1, const QString &path2);
-    //
+    QString rgba_to_hex_color(int r,int g,int b,int a);
+    QString rgb_to_hex_color(int r,int g,int b);
 }
 namespace CodexIncantation {
     QList<QString> getFonts(QString substring); // !
@@ -59,6 +57,8 @@ namespace CodexIncantation {
     QString createEmptyFileDialog();
     QString textInputDialog();
     QString dropDownDialog(QString title, QList<QString> options, QString message); // ?
+    QString colorPicker(QWidget* parent);
+    QString colorPickerAlpha(QWidget* parent);
     // widgets
     template<typename T> T* findClosestParent(QWidget* child);
     void takeWidgetScreenshot(QWidget* wdg, QString fileName); // to file 

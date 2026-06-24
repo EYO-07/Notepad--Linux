@@ -8,18 +8,19 @@ using namespace CodexIncantation;
 
 // Transmutation
 
-/*
-void CodexTransmutation::saveFile(QString fileName, QString content) { // Revision
-    QFile file(fileName);
-    if (!file.exists()) return;
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        out << content;
-        file.close();
-    }
+QString CodexTransmutation::rgba_to_hex_color(int r, int g, int b, int a) {
+    return QString("#%1%2%3%4")
+        .arg(a, 2, 16, QChar('0'))
+        .arg(r, 2, 16, QChar('0'))
+        .arg(g, 2, 16, QChar('0'))
+        .arg(b, 2, 16, QChar('0'));
 }
-*/
-
+QString CodexTransmutation::rgb_to_hex_color(int r, int g, int b) {
+    return QString("#%1%2%3")
+        .arg(r, 2, 16, QChar('0'))
+        .arg(g, 2, 16, QChar('0'))
+        .arg(b, 2, 16, QChar('0'));
+}       
 QString CodexTransmutation::saveFile(const QString &fileName, const QString &content) {
     // "" means success
     QFile file(fileName);
@@ -46,7 +47,6 @@ file_opened:
 end:
     return message;
 }
-
 QString CodexTransmutation::loadFile(QString fileName) { // Revision 
     QFile file(fileName);
     // Check if it's a file and not a directory/socket
@@ -367,6 +367,18 @@ QList<QString> CodexIncantation::getFonts(QString substring) {
         }
     }
     return matchedFonts;
+}
+QString CodexIncantation::colorPicker(QWidget* parent) {
+    static QColor default_color = Qt::white;
+    QColor selected = QColorDialog::getColor(default_color, parent, "Select Color");
+    if (selected.isValid()) default_color = selected;
+    return default_color.name(QColor::HexRgb);
+}
+QString CodexIncantation::colorPickerAlpha(QWidget* parent) {
+    static QColor default_color = Qt::white;
+    QColor selected = QColorDialog::getColor(default_color, parent, "Select Color",QColorDialog::ShowAlphaChannel);
+    if (selected.isValid()) default_color = selected;
+    return default_color.name(QColor::HexArgb);
 }
 
 // Incantation || namespace TabbedSplitView 

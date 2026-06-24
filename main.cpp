@@ -25,7 +25,7 @@ static int WIDTH = 1200;
 static int HEIGHT = 800;
 static QsciScintilla* clipboardPage = nullptr; //
 int splitter_toggle_pos = 1;
-static std::string VERSION="2026-06-23_20";
+static std::string VERSION="2026-06-24_08";
 static std::string USAGE_TEXT = R"(
 Usage: <application> [options] [files]
 
@@ -119,6 +119,10 @@ int main(int argc, char *argv[]) {
         "3. F3 // Toggle the Margin Line Numbers \n"
         "4. F5 // Reload the File from Current Editor \n"
         "5. F6 // Change the scintilla lexer \n"
+        "\n"
+        "// Tools \n"
+        "1. Ctrl+1 // Hex Color Picker \n"
+        "2. Ctrl+2 // Hex Color Picker with Alpha \n"
         "\n"
         "... use this tabpage as you wish, its not stored anywhere. \n"
     );
@@ -602,6 +606,14 @@ void darkTabScintillaLogic(QsciScintilla* view) {
             if (e->key() == Qt::Key_Q) {
                 QString fn = TabbedSplitView::getScintillaFullFileName(tabs, currentTab);
                 CodexIncantation::toggleCommentLine(view, fn);
+                return true;
+            }
+            if (e->key() == Qt::Key_1) { // Color Picker Toolbox
+                view->insert( CodexIncantation::colorPicker(view) );
+                return true;
+            }
+            if (e->key() == Qt::Key_2) { // Color Picker Toolbox Alpha
+                view->insert( CodexIncantation::colorPickerAlpha(view) );
                 return true;
             }
         } else if (e->key() == Qt::Key_F1) { // TESTING Screenshot to Clipboard

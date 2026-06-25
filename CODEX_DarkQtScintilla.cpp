@@ -57,11 +57,15 @@ QSet<QString> FILE_EXT_LEXER_FORTRAN77 = {"f","for","f77","ftn","F","FOR","F77",
 QSet<QString> FILE_EXT_LEXER_FORTRAN = {"f90","f95","f03","f08","f18","F90","FPP"};
 QSet<QString> FILE_EXT_LEXER_MATLAB = {"m"};
 QSet<QString> FILE_EXT_LEXER_TEX = {"tex"};
+QSet<QString> KNOWN_FILES_SHELL = {
+    ".bashrc",".bash_aliases",".bash_profile",".bash_logout",".profile",
+    "grub","40_custom"
+};
 
 QHash<QsciScintilla*, QHash<QString, QVariant>> SCINTILLA_DATA;
 QRegularExpression directiveRegex(R"(\{TextMarker\|([^}]+)\})");
 // external variables 
-extern CodexIncantation::FileRegistry FILE_REGISTRY; // declare in main.cpp for multi-instance 
+extern CodexIncantation::FileRegistry FILE_REGISTRY; // declare in main.cpp for multi-instance
 
 // ===================================================================================
 
@@ -591,6 +595,7 @@ bool CodexIncantation::setLexer(QsciScintilla* editor, QString fileName) { // IN
     }
     // } else if ( .contains(ext) ) {
     QString ext = getExtension(fileName);
+    QString short_filename = getShortFileName(fileName);
     if ( FILE_EXT_LEXER_CPP.contains(ext) ) {
         QsciLexerCPP* lexer = new QsciLexerCPP(editor);
         lexer->setDefaultPaper(bgColor);
@@ -763,7 +768,7 @@ bool CodexIncantation::setLexer(QsciScintilla* editor, QString fileName) { // IN
         //
         editor->setLexer(lexer);
         return true;
-    } else if ( FILE_EXT_LEXER_SHELL.contains(ext) ) { // OK
+    } else if ( FILE_EXT_LEXER_SHELL.contains(ext) || KNOWN_FILES_SHELL.contains(short_filename) ) { // OK
         QsciLexerBash* lexer = new QsciLexerBash(editor);
         lexer->setDefaultPaper(bgColor);
         lexer->setDefaultColor(fgColor);
@@ -774,12 +779,14 @@ bool CodexIncantation::setLexer(QsciScintilla* editor, QString fileName) { // IN
         // -- Bash style
         applyCommonLexerStyle<QsciLexerBash>(lexer);
         lexer->setColor(fgColor, QsciLexerBash::Identifier);
-        lexer->setColor(preprocessorColor, QsciLexerBash::Scalar); 
+        lexer->setColor(keyword2, QsciLexerBash::Scalar); // $VAR 
+        lexer->setPaper(bgScriptColor, QsciLexerBash::Scalar);
         lexer->setColor(stringColor, QsciLexerBash::Backticks); // `command`
+        lexer->setPaper(stringPaperColor, QsciLexerBash::Backticks);
         lexer->setColor(keyword2, QsciLexerBash::ParameterExpansion); // ${VAR}
-        lexer->setPaper(bgColor, QsciLexerBash::ParameterExpansion); // ${VAR}
+        lexer->setPaper(bgColor, QsciLexerBash::ParameterExpansion);
         lexer->setColor(stringColor, QsciLexerBash::Error);
-        //lexer->setPaper(bgColor, QsciLexerBash::Error);
+        lexer->setPaper(bgScriptColor, QsciLexerBash::Error);
         // 
         editor->setLexer(lexer);
         return true;

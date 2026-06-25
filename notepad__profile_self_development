@@ -26,6 +26,7 @@ ${notepad__} --horizontal \
         ./CODEX_DarkQtScintilla.cpp \
         ./CMakeLists.txt \
     --right \
+        ./_Journal \
         ./readme.txt \
         ./readme.md \
         ./_grimoireNotepad__LinuxQt.h \

@@ -1,5 +1,8 @@
-//#ifndef CODEX_DarkQtScintilla_H
-//#define CODEX_DarkQtScintilla_H
+/// BEGIN 
+
+// Docs:
+// 1. https://brdocumentation.github.io/qscintilla/index.html
+
 #pragma once
 #include "CODEX_DarkQt.h"
 #include <Qsci/qsciscintillabase.h>
@@ -154,3 +157,4 @@ if ( QMessageBox::No == QMessageBox::question(
 
 
 
+/// END 

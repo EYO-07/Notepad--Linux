@@ -25,7 +25,7 @@ static int WIDTH = 1200;
 static int HEIGHT = 800;
 static QsciScintilla* clipboardPage = nullptr; //
 int splitter_toggle_pos = 1;
-static std::string VERSION="2026-06-24_08";
+static std::string VERSION="2026-06-25_12";
 static std::string USAGE_TEXT = R"(
 Usage: <application> [options] [files]
 
@@ -609,10 +609,12 @@ void darkTabScintillaLogic(QsciScintilla* view) {
                 return true;
             }
             if (e->key() == Qt::Key_1) { // Color Picker Toolbox
+                if ( view->isReadOnly() ) return true;
                 view->insert( CodexIncantation::colorPicker(view) );
                 return true;
             }
             if (e->key() == Qt::Key_2) { // Color Picker Toolbox Alpha
+                if ( view->isReadOnly() ) return true;
                 view->insert( CodexIncantation::colorPickerAlpha(view) );
                 return true;
             }

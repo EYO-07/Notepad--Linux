@@ -104,6 +104,11 @@ QString CodexTransmutation::getExtension(QString fileName) {
 QString CodexTransmutation::joinPaths(const QString &path1, const QString &path2) {
     return QDir::cleanPath(path1 + QDir::separator() + path2);
 }
+qint64 CodexTransmutation::estimateFileSizeKB(const QString &pathFilename) {
+    QFileInfo fileInfo(pathFilename);
+    if (!fileInfo.exists() || !fileInfo.isFile()) return -1;
+    return fileInfo.size()/1024;
+}
 
 // Incantation 
 void CodexIncantation::applyDarkTheme(QWidget* root) {

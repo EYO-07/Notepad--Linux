@@ -16,16 +16,7 @@ using namespace CodexTransmutation;
 using namespace CodexIncantation;
 
 // -- global variables
-static QString currentSearchString("");
-static QString lastSearchString("");
-CodexIncantation::FileRegistry FILE_REGISTRY("Notepad__LinuxQtSharedFiles");
-// QFileSystemWatcher FILE_WATCHER; 
-// QHash<QString, QDateTime> FILE_MODIFICATION;
-static int WIDTH = 1200;
-static int HEIGHT = 800;
-static QsciScintilla* clipboardPage = nullptr; //
-int splitter_toggle_pos = 1;
-static std::string VERSION="2026-06-25_12";
+static std::string VERSION="2026-06-27_21";
 static std::string USAGE_TEXT = R"(
 Usage: <application> [options] [files]
 
@@ -36,12 +27,24 @@ Options:
   --height=<value>       Set application height (Minimum: 150).
   --vertical             Set the main splitter orientation to Vertical.
   --horizontal           Set the main splitter orientation to Horizontal.
+  --auto-orientation     Automatically change splitter orientation.
   --help                 Show this text.
   --version              Show the current build version.
 
 Arguments:
   [files]                Valid file paths to be opened in the current side's tabs.
 )";
+static int WIDTH = 1200;
+static int HEIGHT = 800;
+static QsciScintilla* clipboardPage = nullptr; //
+int splitter_toggle_pos = 1;
+static QString currentSearchString("");
+static QString lastSearchString("");
+CodexIncantation::FileRegistry FILE_REGISTRY("Notepad__LinuxQtSharedFiles");
+Qt::KeyboardModifier DEFAULT_CTRL_MOD = Qt::ControlModifier;
+Qt::KeyboardModifier DEFAULT_ALT_MOD = Qt::AltModifier;
+// QFileSystemWatcher FILE_WATCHER; 
+// QHash<QString, QDateTime> FILE_MODIFICATION;
 
 // -- forward declaration
 void darkTabScintillaLogic(QsciScintilla* view);
@@ -56,6 +59,21 @@ void logError(QString line);
 void logGreen(QString line);
 
 // -- local classes 
+class Notepad__Window : public QMainWindow {
+    Q_OBJECT // Required for QObject-derived classes
+public:
+    // explicit prevents implicit conversion from QWidget to Notepad__Window ?
+    explicit Notepad__Window(QWidget *parent = nullptr) : QMainWindow(parent) {}
+    explicit Notepad__Window(QWidget *parent, bool auto_orientation) : QMainWindow(parent) {
+        this->b_auto_or = auto_orientation;
+    }
+    void setAutoSplitterOrientation(bool value) { this->b_auto_or = value; }
+protected:
+    // -- variables
+    bool b_auto_or = false;
+    // -- method overrides
+    void resizeEvent(QResizeEvent *event) override;
+};
 
 // -- local functions 
 void debugFileWatcher(const QFileSystemWatcher& watcher) { // UNUSED 
@@ -79,7 +97,8 @@ int main(int argc, char *argv[]) {
         app.setApplicationName("Notepad--");
     }
     //
-    QMainWindow* window = new QMainWindow();
+    // QMainWindow* window = new QMainWindow();
+    Notepad__Window* window = new Notepad__Window();
     QSplitter* splitter = TabbedSplitView::tabbedSplitView(window);
     QTabWidget* ltabs = TabbedSplitView::getTabsByName(splitter, "leftTabs");
     QTabWidget* rtabs = TabbedSplitView::getTabsByName(splitter, "rightTabs");
@@ -186,6 +205,10 @@ int main(int argc, char *argv[]) {
             if (strArgument=="--horizontal") {
                 if (!splitter) continue;
                 splitter->setOrientation(Qt::Horizontal);
+                continue;
+            }
+            if (strArgument=="--auto-orientation") {
+                window->setAutoSplitterOrientation(true);
                 continue;
             }
             QString absDirPath = isDir(strArgument);
@@ -371,7 +394,7 @@ void darkTabScintillaLogic(QsciScintilla* view) {
         if (currentTab == -1) return true;
         QString prev_tab_text = tabs->tabText(currentTab);
         // -- key processing 
-        if (e->modifiers() == Qt::AltModifier) { // Alt
+        if (e->modifiers() == DEFAULT_ALT_MOD) { // Alt
             if (e->key() == Qt::Key_O) {
                 int line, col;
                 view->getCursorPosition(&line, &col);
@@ -471,7 +494,7 @@ void darkTabScintillaLogic(QsciScintilla* view) {
                 TabbedSplitView::switchTabs(currentTab,source,dest);
                 return true;
             }
-        } else if (e->modifiers() == Qt::ControlModifier) { // Control 
+        } else if (e->modifiers() == DEFAULT_CTRL_MOD) { // Control 
             if (e->key() == Qt::Key_L) { // TESTING LOGICAL_ISSUE 
                 QsciScintilla* newEditor = TabbedSplitView::dialogScintillaTabLoad(tabs);
                 if (!newEditor) return true;
@@ -795,5 +818,22 @@ void logGreen(QString line) {
     logGreen(line,clipboardPage);
 }
 
+// classes implementation 
+void Notepad__Window::resizeEvent(QResizeEvent *event) {
+    int newWidth = event->size().width();
+    int newHeight = event->size().height();
+    QSplitter* splitter = this->findChild<QSplitter*>();
+auto_orientation:    
+    if (!this->b_auto_or) goto base_propagation;
+    if (1.5*newHeight<=newWidth) {
+        splitter->setOrientation(Qt::Horizontal);
+    } else {
+        splitter->setOrientation(Qt::Vertical);
+    }
+base_propagation:
+    QMainWindow::resizeEvent(event); // Base propagation
+}
+
+#include "main.moc" // REQUIRED: Include the MOC file generated from this .cpp file
 // -- END 
 

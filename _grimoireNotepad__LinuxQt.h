@@ -137,6 +137,11 @@ Workflow [ Programming ] { Magic Oriented Programming Paradigm }
 // Incantation || Qt6 Framework 
 
 /// -- basics 
+/** Parent ~ Child { Qt6 }
+? How to get first child of type 
+:: T child = parent->findChild<T*>(name, options);
+:: T child = parent->findChild<T*>();
+*/
 /* Inventory [ Qt Framework ] { C++, Linux } 
  * QApplication app(argc, argv); // Manages GUI application control flow and settings
  * QPushButton button("Text");   // Creates a clickable push button widget

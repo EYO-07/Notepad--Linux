@@ -45,6 +45,7 @@ namespace CodexTransmutation {
     QString joinPaths(const QString &path1, const QString &path2);
     QString rgba_to_hex_color(int r,int g,int b,int a);
     QString rgb_to_hex_color(int r,int g,int b);
+    qint64 estimateFileSizeKB(const QString &pathFilename);
 }
 namespace CodexIncantation {
     QList<QString> getFonts(QString substring); // !

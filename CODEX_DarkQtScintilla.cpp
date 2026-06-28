@@ -1564,6 +1564,20 @@ QsciScintilla* TabbedSplitView::dialogScintillaTabLoad(QTabWidget* tabs) {
     if (!splitter) return nullptr;
     QString fileName = QFileDialog::getOpenFileName(tabs);
     if ( fileName.isNull() || fileName.isEmpty() ) return nullptr;
+    qint64 estimate_size = CodexTransmutation::estimateFileSizeKB(fileName);
+    qint64 estimate_lines = 30*estimate_size;
+    if (estimate_lines>1000) {
+        auto reply = QMessageBox::question(nullptr, "Large File Warning",
+            QString(
+                "Are you sure to open this file ?\n"
+                "%1\n"
+                "size ~ %2 KB\n"
+                "lines ~ %3"
+            ).arg(fileName).arg(estimate_size).arg(estimate_lines), 
+            QMessageBox::No|QMessageBox::Yes, QMessageBox::No
+        );
+        if (reply==QMessageBox::No) return nullptr;
+    }    
     if (TabbedSplitView::isFileAlreadyOpened(tabs,fileName)) { 
         QMessageBox::warning(tabs, "Aborted", "File is Already Opened");
         return nullptr; 

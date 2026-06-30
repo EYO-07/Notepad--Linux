@@ -1,4 +1,5 @@
 // {TextMarker|cyan:>>>,<<<,TODO|red:ISSUE|yellow:INCOMPLETE,DEPRECATED,TESTING,REVISION|blue:OK}
+// {TextMarker|red:|blue:}
 // -- BEGIN 
 // CODEX_DarkQtScintilla.cpp
 #include "CODEX_DarkQtScintilla.h"
@@ -514,6 +515,26 @@ template<typename LEXER> void applyFortran77Style(LEXER* lexer) {
     lexer->setColor(preprocessorColor, LEXER::PreProcessor);
     lexer->setColor(operatorColor, LEXER::DottedOperator);
     lexer->setColor(keyword2, LEXER::Label);
+}
+
+bool largeFileWarningDialog(QString fileName) {
+    if ( fileName.isNull() || fileName.isEmpty() ) return true; // file => large
+    qint64 estimate_size = CodexTransmutation::estimateFileSizeKB(fileName);
+    if (estimate_size<0) return true; // file => large
+    qint64 estimate_lines = 30*estimate_size;
+    if (estimate_lines>1000) {
+        auto reply = QMessageBox::question(nullptr, "Large File Warning",
+            QString(
+                "Are you sure to open this file ?\n"
+                "%1\n"
+                "size ~ %2 KB\n"
+                "lines ~ %3"
+            ).arg(fileName).arg(estimate_size).arg(estimate_lines), 
+            QMessageBox::No|QMessageBox::Yes, QMessageBox::No
+        );
+        if (reply==QMessageBox::No) return false;
+    }
+    return true;
 }
 
 // -- implementations
@@ -1564,20 +1585,23 @@ QsciScintilla* TabbedSplitView::dialogScintillaTabLoad(QTabWidget* tabs) {
     if (!splitter) return nullptr;
     QString fileName = QFileDialog::getOpenFileName(tabs);
     if ( fileName.isNull() || fileName.isEmpty() ) return nullptr;
-    qint64 estimate_size = CodexTransmutation::estimateFileSizeKB(fileName);
-    qint64 estimate_lines = 30*estimate_size;
-    if (estimate_lines>1000) {
-        auto reply = QMessageBox::question(nullptr, "Large File Warning",
-            QString(
-                "Are you sure to open this file ?\n"
-                "%1\n"
-                "size ~ %2 KB\n"
-                "lines ~ %3"
-            ).arg(fileName).arg(estimate_size).arg(estimate_lines), 
-            QMessageBox::No|QMessageBox::Yes, QMessageBox::No
-        );
-        if (reply==QMessageBox::No) return nullptr;
-    }    
+        
+    if (!largeFileWarningDialog(fileName)) return nullptr;
+    //qint64 estimate_size = CodexTransmutation::estimateFileSizeKB(fileName);
+    //qint64 estimate_lines = 30*estimate_size;
+    //if (estimate_lines>1000) {
+        //auto reply = QMessageBox::question(nullptr, "Large File Warning",
+            //QString(
+                //"Are you sure to open this file ?\n"
+                //"%1\n"
+                //"size ~ %2 KB\n"
+                //"lines ~ %3"
+            //).arg(fileName).arg(estimate_size).arg(estimate_lines), 
+            //QMessageBox::No|QMessageBox::Yes, QMessageBox::No
+        //);
+        //if (reply==QMessageBox::No) return nullptr;
+    //}
+    
     if (TabbedSplitView::isFileAlreadyOpened(tabs,fileName)) { 
         QMessageBox::warning(tabs, "Aborted", "File is Already Opened");
         return nullptr; 
@@ -1616,6 +1640,37 @@ QsciScintilla* TabbedSplitView::dialogScintillaTabLoad(QTabWidget* tabs) {
     editor->setFocus();
     return editor;
 }
+
+bool TabbedSplitView::dialogScintillaTabReload(QTabWidget* tabs, QsciScintilla* editor) {
+    if (!tabs) return false;
+    if (!editor) return false;
+    int currentTab = tabs->currentIndex();
+    if (currentTab == -1) return false;
+    QString fileName = TabbedSplitView::getScintillaFullFileName(tabs,currentTab);
+    if ( fileName.isEmpty() || fileName.isNull() ) return false;
+    auto reply = QMessageBox::question(
+        editor, 
+        "Reload", 
+        QString(
+            "Are you sure to reload this file (%1), unsaved modifications will be lost."
+        ).arg(fileName), 
+        QMessageBox::Yes|QMessageBox::No
+    );
+    if (reply==QMessageBox::No) return false;
+    if (!largeFileWarningDialog(fileName)) return false;
+    QString new_tab_text = CodexTransmutation::getShortFileName(fileName);    
+    if ( new_tab_text.isEmpty() || new_tab_text.isNull() ) return false;
+    tabs->setTabText(currentTab, QString("[ ")+new_tab_text+QString(" ]"));
+    QString content = CodexTransmutation::loadFile(fileName);
+    editor->blockSignals(true);
+    editor->setText(content);
+    updateNumberMarginWidth(editor);
+    editor->blockSignals(false);
+    editor->setReadOnly(true);
+    editor->foldAll(true);
+    return true;
+}
+
 QsciScintilla* TabbedSplitView::loadScintillaFromFilename(QTabWidget* tabs, QString fileName) {
     if (!tabs) return nullptr;
     QSplitter* splitter = findClosestParent<QSplitter>(tabs);

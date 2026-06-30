@@ -79,6 +79,7 @@ namespace CodexIncantation {
         QsciScintilla* addLeftTab_Scintilla(QSplitter* view, QString name, QString content);
         QsciScintilla* addRightTab_Scintilla(QSplitter* view, QString name, QString content);
         QsciScintilla* dialogScintillaTabLoad(QTabWidget* tabs);
+        bool dialogScintillaTabReload(QTabWidget* tabs,QsciScintilla* view); // !
         QsciScintilla* loadScintillaFromFilename(QTabWidget* tabs, QString fileName);
         bool isFileAlreadyOpened(QSplitter* splitter, QString absFilepath);
         bool isFileAlreadyOpened(QTabWidget* currentTabs, QString absFilepath);

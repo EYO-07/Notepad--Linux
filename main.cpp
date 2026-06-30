@@ -16,7 +16,7 @@ using namespace CodexTransmutation;
 using namespace CodexIncantation;
 
 // -- global variables
-static std::string VERSION="2026-06-27_21";
+static std::string VERSION="2026-06-30_12";
 static std::string USAGE_TEXT = R"(
 Usage: <application> [options] [files]
 
@@ -700,24 +700,28 @@ void darkTabScintillaLogic(QsciScintilla* view) {
             //view->setVisible(!view->isVisible());
             return true;
         } else if (e->key() == Qt::Key_F5) { // Reload
+            if(!TabbedSplitView::dialogScintillaTabReload(tabs,view)) return true;
             QString fileName = TabbedSplitView::getScintillaFullFileName(tabs,currentTab);
             if ( fileName.isEmpty() || fileName.isNull() ) return true;
-            auto reply = QMessageBox::question(
-                view, 
-                "Reload", 
-                "Are you sure to reload this file, unsaved modifications will be lost", 
-                QMessageBox::Yes|QMessageBox::No
-            );
-            if (reply==QMessageBox::No) return true;
-            QString new_tab_text = CodexTransmutation::getShortFileName(fileName);    
-            if ( new_tab_text.isEmpty() || new_tab_text.isNull() ) return true;
-            tabs->setTabText(currentTab, QString("[ ")+new_tab_text+QString(" ]"));
-            QString content = CodexTransmutation::loadFile(fileName);
-            view->blockSignals(true);
-            view->setText(content);
-            view->blockSignals(false);
-            view->setReadOnly(true);
-            view->foldAll(true);
+            
+            //auto reply = QMessageBox::question(
+                //view, 
+                //"Reload", 
+                //"Are you sure to reload this file, unsaved modifications will be lost", 
+                //QMessageBox::Yes|QMessageBox::No
+            //);
+            //if (reply==QMessageBox::No) return true;
+            //QString new_tab_text = CodexTransmutation::getShortFileName(fileName);    
+            //if ( new_tab_text.isEmpty() || new_tab_text.isNull() ) return true;
+            //tabs->setTabText(currentTab, QString("[ ")+new_tab_text+QString(" ]"));
+            //QString content = CodexTransmutation::loadFile(fileName);
+            //view->blockSignals(true);
+            //view->setText(content);
+            //CodexIncantation::setMargin(view); // this should update the margin width 
+            //view->blockSignals(false);
+            //view->setReadOnly(true);
+            //view->foldAll(true);
+            
             log(QString("File Reloaded : '%1'").arg(fileName));
             return true;
         } else if (e->key() == Qt::Key_F6) { // Change lexer 

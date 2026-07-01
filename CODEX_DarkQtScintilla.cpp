@@ -60,7 +60,8 @@ QSet<QString> FILE_EXT_LEXER_MATLAB = {"m"};
 QSet<QString> FILE_EXT_LEXER_TEX = {"tex"};
 QSet<QString> KNOWN_FILES_SHELL = {
     ".bashrc",".bash_aliases",".bash_profile",".bash_logout",".profile",
-    "grub","40_custom"
+    "grub","40_custom",
+    "config"
 };
 
 QHash<QsciScintilla*, QHash<QString, QVariant>> SCINTILLA_DATA;

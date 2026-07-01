@@ -16,7 +16,7 @@ using namespace CodexTransmutation;
 using namespace CodexIncantation;
 
 // -- global variables
-static std::string VERSION="2026-07-01_11";
+static std::string VERSION="2026-07-01_1144";
 static std::string USAGE_TEXT = R"(
 Usage: <application> [options] [files]
 

@@ -16,7 +16,7 @@ using namespace CodexTransmutation;
 using namespace CodexIncantation;
 
 // -- global variables
-static std::string VERSION="2026-06-30_12";
+static std::string VERSION="2026-07-01_11";
 static std::string USAGE_TEXT = R"(
 Usage: <application> [options] [files]
 
@@ -233,7 +233,12 @@ int main(int argc, char *argv[]) {
             }
             QsciScintilla* editor = TabbedSplitView::loadScintillaFromFilename(tabs, absFileName);
             if (!editor) { 
-                logError("Failed to Load File : is the file opened in another instance ?",clipboardPage);
+                logError(
+                    QString(
+                        "Failed to Load File (%1) : is the file opened in another instance ?"
+                    ).arg(absFileName),
+                    clipboardPage
+                );
                 continue;
             }
             darkTabScintillaLogic(editor);

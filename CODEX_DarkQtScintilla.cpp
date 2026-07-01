@@ -1584,24 +1584,8 @@ QsciScintilla* TabbedSplitView::dialogScintillaTabLoad(QTabWidget* tabs) {
     QSplitter* splitter = findClosestParent<QSplitter>(tabs);
     if (!splitter) return nullptr;
     QString fileName = QFileDialog::getOpenFileName(tabs);
-    if ( fileName.isNull() || fileName.isEmpty() ) return nullptr;
-        
+    if ( fileName.isNull() || fileName.isEmpty() ) return nullptr;    
     if (!largeFileWarningDialog(fileName)) return nullptr;
-    //qint64 estimate_size = CodexTransmutation::estimateFileSizeKB(fileName);
-    //qint64 estimate_lines = 30*estimate_size;
-    //if (estimate_lines>1000) {
-        //auto reply = QMessageBox::question(nullptr, "Large File Warning",
-            //QString(
-                //"Are you sure to open this file ?\n"
-                //"%1\n"
-                //"size ~ %2 KB\n"
-                //"lines ~ %3"
-            //).arg(fileName).arg(estimate_size).arg(estimate_lines), 
-            //QMessageBox::No|QMessageBox::Yes, QMessageBox::No
-        //);
-        //if (reply==QMessageBox::No) return nullptr;
-    //}
-    
     if (TabbedSplitView::isFileAlreadyOpened(tabs,fileName)) { 
         QMessageBox::warning(tabs, "Aborted", "File is Already Opened");
         return nullptr; 
@@ -1640,7 +1624,6 @@ QsciScintilla* TabbedSplitView::dialogScintillaTabLoad(QTabWidget* tabs) {
     editor->setFocus();
     return editor;
 }
-
 bool TabbedSplitView::dialogScintillaTabReload(QTabWidget* tabs, QsciScintilla* editor) {
     if (!tabs) return false;
     if (!editor) return false;
@@ -1670,17 +1653,13 @@ bool TabbedSplitView::dialogScintillaTabReload(QTabWidget* tabs, QsciScintilla* 
     editor->foldAll(true);
     return true;
 }
-
 QsciScintilla* TabbedSplitView::loadScintillaFromFilename(QTabWidget* tabs, QString fileName) {
     if (!tabs) return nullptr;
     QSplitter* splitter = findClosestParent<QSplitter>(tabs);
     if (!splitter) return nullptr;
     fileName = fileExists(fileName);
     if (fileName.isEmpty() || fileName.isNull()) return nullptr;
-    if (TabbedSplitView::isFileAlreadyOpened(tabs,fileName)) { 
-        QMessageBox::warning(tabs, "Aborted", "File is Already Opened");
-        return nullptr; 
-    }
+    if ( TabbedSplitView::isFileAlreadyOpened(tabs,fileName) ) return nullptr;
     QString new_tab_text = getShortFileName(fileName);
     if (new_tab_text.isNull() || new_tab_text.isEmpty()) return nullptr;
     if ( !FILE_REGISTRY.registerFile(fileName) ) return nullptr;
@@ -1750,6 +1729,32 @@ QString TabbedSplitView::getScintillaFullFileName(QTabWidget* tabs, int tabIndex
     if (absPath.isNull()) return "";
     return absPath;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // -- END 
 
